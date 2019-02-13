@@ -153,36 +153,6 @@ struct pro {
 void scan_profile(FILE *);
 void set_option(char *);
 
-/*
- * set_profile reads $HOME/.indent.pro and ./.indent.pro and handles arguments
- * given in these files.
- */
-void
-set_profile(void)
-{
-    FILE *f;
-    char        fname[BUFSIZ];
-    char	*home;
-    static char prof[] = ".indent.pro";
-
-    home = getenv("HOME");
-    if (home != NULL && *home != '\0') {
-	if (snprintf(fname, sizeof fname, "%s/%s", home, prof) >= sizeof fname) {
-	    warnc(ENAMETOOLONG, "%s/%s", home, prof);
-	    return;
-	}
-	if ((f = fopen(option_source = fname, "r")) != NULL) {
-	    scan_profile(f);
-	    (void) fclose(f);
-	}
-    }
-    if ((f = fopen(option_source = prof, "r")) != NULL) {
-	scan_profile(f);
-	(void) fclose(f);
-    }
-    option_source = "Command line";
-}
-
 void
 scan_profile(FILE *f)
 {

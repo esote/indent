@@ -48,10 +48,6 @@ char       *in_name = "Standard Input";	/* will always point to name of input
 					 * file */
 char       *out_name = "Standard Output";	/* will always point to name
 						 * of output file */
-char        bakfile[PATH_MAX] = "";
-
-void bakcopy(void);
-
 int
 main(int argc, char **argv)
 {
@@ -78,7 +74,7 @@ main(int argc, char **argv)
 
     int         last_else = 0;	/* true iff last keyword was an else */
 
-    if (pledge("stdio rpath wpath cpath", NULL) == -1)
+    if (pledge("stdio", NULL) == -1)
 	err(1, "pledge");
 
     /*-----------------------------------------------*\
@@ -134,82 +130,15 @@ main(int argc, char **argv)
 
     output = 0;
 
-
-
     /*--------------------------------------------------*\
     |   		COMMAND LINE SCAN		 |
     \*--------------------------------------------------*/
 
-#ifdef undef
-    max_col = 78;		/* -l78 */
-    lineup_to_parens = 1;	/* -lp */
-    ps.ljust_decl = 0;		/* -ndj */
-    ps.com_ind = 33;		/* -c33 */
-    star_comment_cont = 1;	/* -sc */
-    ps.ind_size = 8;		/* -i8 */
-    verbose = 0;
-    ps.decl_indent = 16;	/* -di16 */
-    ps.indent_parameters = 1;	/* -ip */
-    ps.decl_com_ind = 0;	/* if this is not set to some positive value
-				 * by an arg, we will set this equal to
-				 * ps.com_ind */
-    btype_2 = 1;		/* -br */
-    cuddle_else = 1;		/* -ce */
-    ps.unindent_displace = 0;	/* -d0 */
-    ps.case_indent = 0;		/* -cli0 */
-    format_col1_comments = 1;	/* -fc1 */
-    procnames_start_line = 1;	/* -psl */
-    proc_calls_space = 0;	/* -npcs */
-    comment_delimiter_on_blankline = 1;	/* -cdb */
-    ps.leave_comma = 1;		/* -nbc */
-#endif
-
-    for (i = 1; i < argc; ++i)
-	if (strcmp(argv[i], "-npro") == 0)
-	    break;
     set_defaults();
-    if (i >= argc)
-	set_profile();
 
-    for (i = 1; i < argc; ++i) {
+    input = stdin;
+    output = stdout;
 
-	/*
-	 * look thru args (if any) for changes to defaults
-	 */
-	if (argv[i][0] != '-') {/* no flag on parameter */
-	    if (input == 0) {	/* we must have the input file */
-		in_name = argv[i];	/* remember name of input file */
-		input = fopen(in_name, "r");
-		if (input == NULL)		/* check for open error */
-			err(1, "%s", in_name);
-		continue;
-	    }
-	    else if (output == 0) {	/* we have the output file */
-		out_name = argv[i];	/* remember name of output file */
-		if (strcmp(in_name, out_name) == 0)	/* attempt to overwrite
-							 * the file */
-			errx(1, "input and output files must be different");
-		output = fopen(out_name, "w");
-		if (output == NULL)	/* check for create error */
-			err(1, "%s", out_name);
-		continue;
-	    }
-	    errx(1, "unknown parameter: %s", argv[i]);
-	}
-	else
-	    set_option(argv[i]);
-    }				/* end of for */
-    if (input == NULL) {
-	input = stdin;
-    }
-    if (output == NULL) {
-	if (troff || input == stdin)
-	    output = stdout;
-	else {
-	    out_name = in_name;
-	    bakcopy();
-	}
-    }
     if (ps.com_ind <= 1)
 	ps.com_ind = 2;		/* dont put normal comments before column 2 */
     if (troff) {
@@ -1125,16 +1054,6 @@ check_type:
 		    diag(1, "Unmatched #endif");
 		else {
 		    ifdef_level--;
-
-#ifdef undef
-		    /*
-		     * This match needs to be more intelligent before the
-		     * message is useful
-		     */
-		    if (match_state[ifdef_level].tos >= 0
-			  && bcmp(&ps, &match_state[ifdef_level], sizeof ps))
-			diag(0, "Syntactically inconsistent #ifdef alternatives.");
-#endif
 		}
 		if (blanklines_around_conditional_compilation) {
 		    postfix_blankline_requested++;
@@ -1159,51 +1078,4 @@ check_type:
 	if (type_code != comment && type_code != newline && type_code != preesc)
 	    ps.last_token = type_code;
     }				/* end of main while (1) loop */
-}
-
-/*
- * copy input file to backup file if in_name is /blah/blah/blah/file, then
- * backup file will be ".Bfile" then make the backup file the input and
- * original input file the output
- */
-void
-bakcopy(void)
-{
-    int         n,
-                bakchn;
-    char        buff[8 * 1024];
-    char       *p;
-
-    /* construct file name .Bfile */
-    for (p = in_name; *p; p++);	/* skip to end of string */
-    while (p > in_name && *p != '/')	/* find last '/' */
-	p--;
-    if (*p == '/')
-	p++;
-    if (snprintf(bakfile, PATH_MAX, "%s.BAK", p) >= PATH_MAX)
-	    errc(1, ENAMETOOLONG, "%s.BAK", p);
-
-    /* copy in_name to backup file */
-    bakchn = open(bakfile, O_CREAT | O_TRUNC | O_WRONLY, 0600);
-    if (bakchn < 0)
-	err(1, "%s", bakfile);
-    while ((n = read(fileno(input), buff, sizeof buff)) > 0)
-	if (write(bakchn, buff, n) != n)
-	    err(1, "%s", bakfile);
-    if (n < 0)
-	err(1, "%s", in_name);
-    close(bakchn);
-    fclose(input);
-
-    /* re-open backup file as the input file */
-    input = fopen(bakfile, "r");
-    if (input == NULL)
-	err(1, "%s", bakfile);
-    /* now the original input file will be the output */
-    output = fopen(in_name, "w");
-    if (output == NULL) {
-	int saved_errno = errno;
-	unlink(bakfile);
-	errc(1, saved_errno, "%s", in_name);
-    }
 }
