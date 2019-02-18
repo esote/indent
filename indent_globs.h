@@ -47,10 +47,6 @@
 #define false 0
 #define true  1
 
-
-FILE       *input;		/* the fid for the input file */
-FILE       *output;		/* the output file */
-
 #define CHECK_SIZE_CODE \
 	if (e_code >= l_code) { \
 	    int nsize = l_code-s_code+400; \
@@ -142,13 +138,12 @@ float       case_ind;		/* indentation level to be used for a "case
 int         code_lines;		/* count of lines with code */
 int         had_eof;		/* set to true when input is exhausted */
 int         line_no;		/* the current line number. */
-int         max_col;		/* the maximum allowable line length */
+
+#define max_col	78		/* the maximum allowable line length */
+
 int         inhibit_formatting;	/* true if INDENT OFF is in effect */
 int         suppress_blanklines;/* set iff following blanklines should be
 				 * suppressed */
-int         continuation_indent;/* set to the indentation between the edge of
-				 * code and continuation lines */
-int         block_comment_max_col;
 
 /* -troff font state information */
 

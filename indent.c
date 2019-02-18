@@ -124,9 +124,6 @@ main(void)
     bp_save = 0;
     be_save = 0;
 
-    input = stdin;
-    output = stdout;
-
     /*--------------------------------------------------*\
     |   		COMMAND LINE SCAN		 |
     \*--------------------------------------------------*/
@@ -135,12 +132,8 @@ main(void)
 
     if (ps.com_ind <= 1)
 	ps.com_ind = 2;		/* dont put normal comments before column 2 */
-    if (block_comment_max_col <= 0)
-	block_comment_max_col = max_col;
     if (ps.decl_com_ind <= 0)	/* if not specified by user, set this */
 	ps.decl_com_ind = ps.com_ind;
-    if (continuation_indent == 0)
-	continuation_indent = ps.ind_size;
     fill_buffer();	/* get first batch of stuff into input buffer */
 
     parse(semicolon);
@@ -234,7 +227,7 @@ main(void)
 			if (sc_end >= &(save_com[sc_size])) {	/* check for temp buffer
 								 * overflow */
 			    diag(1, "Internal buffer overflow - Move big comment from right after if, while, or whatever.");
-			    fflush(output);
+			    fflush(stdout);
 			    exit(1);
 			}
 		    }
@@ -298,7 +291,7 @@ check_type:
 	    if (ps.tos > 1)	/* check for balanced braces */
 		diag(1, "Missing braces at end of file.");
 
-	    fflush(output);
+	    fflush(stdout);
 	    exit(found_err);
 	}
 	if (

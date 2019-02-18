@@ -73,7 +73,7 @@ dump_line(void)
 		n_real_blanklines = 1;
 	}
 	while (--n_real_blanklines >= 0)
-	    putc('\n', output);
+	    putchar('\n');
 	n_real_blanklines = 0;
 	if (ps.ind_level == 0)
 	    ps.ind_stmt = 0;	/* this is a class A kludge. dont do
@@ -87,7 +87,7 @@ dump_line(void)
 	if (e_lab != s_lab) {	/* print lab, if any */
 	    if (comment_open) {
 		comment_open = 0;
-		fprintf(output, ".*/\n");
+		puts(".*/");
 	    }
 	    while (e_lab > s_lab && (e_lab[-1] == ' ' || e_lab[-1] == '\t'))
 		e_lab--;
@@ -98,15 +98,15 @@ dump_line(void)
 		if (e_lab[-1] == '\n')
 			e_lab--;
 		do
-			putc(*s++, output);
+			putchar(*s++);
 		while (s < e_lab && 'a' <= *s && *s<='z');
 		while ((*s == ' ' || *s == '\t') && s < e_lab)
 		    s++;
 		if (s < e_lab)
-		    fprintf(output, s[0]=='/' && s[1]=='*' ? "\t%.*s" : "\t/* %.*s */",
+		    printf(s[0]=='/' && s[1]=='*' ? "\t%.*s" : "\t/* %.*s */",
 			    (int)(e_lab - s), s);
 	    }
-	    else fprintf(output, "%.*s", (int)(e_lab - s_lab), s_lab);
+	    else printf("%.*s", (int)(e_lab - s_lab), s_lab);
 	    cur_col = count_spaces(cur_col, s_lab);
 	}
 	else
@@ -119,7 +119,7 @@ dump_line(void)
 
 	    if (comment_open) {
 		comment_open = 0;
-		fprintf(output, ".*/\n");
+		puts(".*/");
 	    }
 	    target_col = compute_code_target();
 	    {
@@ -132,9 +132,9 @@ dump_line(void)
 	    cur_col = pad_output(cur_col, target_col);
 	    for (p = s_code; p < e_code; p++)
 		if (*p == (char) 0200)
-		    fprintf(output, "%d", target_col * 7);
+		    printf("%d", target_col * 7);
 		else
-		    putc(*p, output);
+		    putchar(*p);
 	    cur_col = count_spaces(cur_col, s_code);
 	}
 	if (s_com != e_com) {
@@ -154,7 +154,7 @@ dump_line(void)
 			target = 1;
 		if (cur_col > target) {	/* if comment cant fit on this line,
 					 * put it on next line */
-		    putc('\n', output);
+		    putchar('\n');
 		    cur_col = 1;
 		    ++ps.out_lines;
 		}
@@ -166,19 +166,19 @@ dump_line(void)
 			if (com_st[1] == ' ' && com_st[0] == ' ' && e_com > com_st + 1)
 			    com_st[1] = '*';
 			else
-			    fwrite(" * ", com_st[0] == '\t' ? 2 : com_st[0] == '*' ? 1 : 3, 1, output);
+			    fwrite(" * ", com_st[0] == '\t' ? 2 : com_st[0] == '*' ? 1 : 3, 1, stdout);
 		    }
 		}
-		fwrite(com_st, e_com - com_st, 1, output);
+		fwrite(com_st, e_com - com_st, 1, stdout);
 		ps.comment_delta = ps.n_comment_delta;
 		cur_col = count_spaces(cur_col, com_st);
 		++ps.com_lines;	/* count lines with comments */
 	    }
 	}
 	if (ps.use_ff)
-	    putc('\014', output);
+	    putchar('\014');
 	else
-	    putc('\n', output);
+	    putchar('\n');
 	++ps.out_lines;
         prefix_blankline_requested = postfix_blankline_requested;
 	postfix_blankline_requested = 0;
@@ -224,7 +224,7 @@ compute_code_target(void)
 		target_col = t;
 	}
     } else if (ps.ind_stmt) {
-	target_col += continuation_indent;
+	target_col += ps.ind_size;
     }
     return target_col;
 }
@@ -259,7 +259,7 @@ fill_buffer(void)
 {				/* this routine reads stuff from the input */
     char *p, *buf2;
     int i;
-    FILE *f = input;
+    FILE *f = stdin;
 
     if (bp_save != 0) {		/* there is a partly filled input buffer left */
 	buf_ptr = bp_save;	/* dont read anything, just switch buffers */
@@ -337,7 +337,7 @@ fill_buffer(void)
     if (inhibit_formatting) {
 	p = in_buffer;
 	do
-	    putc(*p, output);
+	    putchar(*p);
 	while (*p++ != '\n');
     }
     return;
@@ -381,11 +381,11 @@ pad_output(int current, int target)
 	    return (current);	/* line is already long enough */
     curr = current;
     while ((tcur = ((curr - 1) & tabmask) + tabsize + 1) <= target) {
-	putc('\t', output);
+	putchar('\t');
 	curr = tcur;
     }
     while (curr++ < target)
-	putc(' ', output);	/* pad with final blanks */
+	putchar(' ');	/* pad with final blanks */
     return (target);
 }
 
@@ -451,15 +451,8 @@ diag(int level, const char *msg, ...)
     va_start(ap, msg);
     if (level)
 	found_err = 1;
-    if (output == stdout) {
-	fprintf(stdout, "/**INDENT** %s@%d: ", level == 0 ? "Warning" : "Error", line_no);
-	vfprintf(stdout, msg, ap);
-	fprintf(stdout, " */\n");
-    }
-    else {
-	fprintf(stderr, "%s@%d: ", level == 0 ? "Warning" : "Error", line_no);
-	vfprintf(stderr, msg, ap);
-	fprintf(stderr, "\n");
-    }
+    fprintf(stdout, "/**INDENT** %s@%d: ", level == 0 ? "Warning" : "Error", line_no);
+    vfprintf(stdout, msg, ap);
+    fprintf(stdout, " */\n");
     va_end(ap);
 }

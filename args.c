@@ -57,13 +57,10 @@ struct pro {
     int        *p_obj;		/* the associated variable */
 }           pro[] = {
 	{"cd", 0, &ps.decl_com_ind },
-	{"ci", 0, &continuation_indent },
 	{"c", 33, &ps.com_ind },
 	{"di", 16, &ps.decl_indent },
 	{"d", 0, &ps.unindent_displace },
 	{"i", 8, &ps.ind_size },
-	{"lc", 0, &block_comment_max_col },
-	{"l", 78, &max_col },
 	/* whew! */
 	{ 0, 0, 0 }
 };

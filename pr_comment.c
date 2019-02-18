@@ -114,7 +114,7 @@ pr_comment(void)
 	 * out at left
 	 */
 	ps.com_col = (ps.ind_level - ps.unindent_displace) * ps.ind_size + 1;
-	adj_max_col = block_comment_max_col;
+	adj_max_col = max_col;
 	if (ps.com_col <= 1)
 	    ps.com_col = 1;
     } else {
