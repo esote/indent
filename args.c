@@ -64,19 +64,18 @@ struct pro {
     char       *p_name;		/* name, eg -bl, -cli */
     int         p_type;		/* type (int, bool, special) */
     int         p_default;	/* the default value (if int) */
-    int         p_special;	/* depends on type */
     int        *p_obj;		/* the associated variable */
 }           pro[] = {
-	{"cd", PRO_INT, 0, 0, &ps.decl_com_ind },
-	{"ci", PRO_INT, 0, 0, &continuation_indent },
-	{"c", PRO_INT, 33, 0, &ps.com_ind },
-	{"di", PRO_INT, 16, 0, &ps.decl_indent },
-	{"d", PRO_INT, 0, 0, &ps.unindent_displace },
-	{"i", PRO_INT, 8, 0, &ps.ind_size },
-	{"lc", PRO_INT, 0, 0, &block_comment_max_col },
-	{"l", PRO_INT, 78, 0, &max_col },
+	{"cd", PRO_INT, 0, &ps.decl_com_ind },
+	{"ci", PRO_INT, 0, &continuation_indent },
+	{"c", PRO_INT, 33, &ps.com_ind },
+	{"di", PRO_INT, 16, &ps.decl_indent },
+	{"d", PRO_INT, 0, &ps.unindent_displace },
+	{"i", PRO_INT, 8, &ps.ind_size },
+	{"lc", PRO_INT, 0, &block_comment_max_col },
+	{"l", PRO_INT, 78, &max_col },
 	/* whew! */
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0 }
 };
 
 void scan_profile(FILE *);

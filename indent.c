@@ -45,7 +45,7 @@
 #include <err.h>
 
 int
-main(int argc, char **argv)
+main(void)
 {
 
     extern int  found_err;	/* flag set in diag() on error */
