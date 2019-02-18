@@ -101,12 +101,7 @@ pr_comment(void)
 
     /* Figure where to align and how to treat the comment */
 
-    if (ps.col_1 && !format_col1_comments) {	/* if comment starts in column
-						 * 1 it should not be touched */
-	ps.box_com = true;
-	ps.com_col = 1;
-    }
-    else {
+    if (true) {
 	if (*buf_ptr == '-' || *buf_ptr == '*' || *buf_ptr == '\n') {
 	    ps.box_com = true;	/* a comment with a '-', '*' or newline
 				 * immediately after the / * is assumed to be
@@ -122,7 +117,7 @@ pr_comment(void)
 	    ps.com_col = (ps.ind_level - ps.unindent_displace) * ps.ind_size + 1;
 	    adj_max_col = block_comment_max_col;
 	    if (ps.com_col <= 1)
-		ps.com_col = 1 + !format_col1_comments;
+		ps.com_col = 1;
 	}
 	else {
 	    int    target_col;

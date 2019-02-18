@@ -154,10 +154,6 @@ int         procnames_start_line;	/* if true, the names of procedures
 					 * name) */
 int         proc_calls_space;	/* If true, procedure calls look like:
 				 * foo(bar) rather than foo (bar) */
-int         format_col1_comments;	/* If comments which start in column 1
-					 * are to be magically reformatted
-					 * (just like comments that begin in
-					 * later columns) */
 int         inhibit_formatting;	/* true if INDENT OFF is in effect */
 int         suppress_blanklines;/* set iff following blanklines should be
 				 * suppressed */
