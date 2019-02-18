@@ -214,10 +214,8 @@ compute_code_target(void)
     int target_col;
 
     target_col = ps.ind_size * ps.ind_level + 1;
-    if (ps.paren_level)
-	if (!lineup_to_parens)
-	    target_col += continuation_indent * ps.paren_level;
-	else {
+    if (ps.paren_level) {
+	if (true) {
 	    int    w;
 	    int    t = paren_target;
 
@@ -230,8 +228,9 @@ compute_code_target(void)
 	    else
 		target_col = t;
 	}
-    else if (ps.ind_stmt)
+    } else if (ps.ind_stmt) {
 	target_col += continuation_indent;
+    }
     return target_col;
 }
 

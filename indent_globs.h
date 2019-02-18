@@ -159,8 +159,6 @@ int         suppress_blanklines;/* set iff following blanklines should be
 				 * suppressed */
 int         continuation_indent;/* set to the indentation between the edge of
 				 * code and continuation lines */
-int         lineup_to_parens;	/* if true, continued code within parens will
-				 * be lined up to the open paren */
 int         block_comment_max_col;
 int	    use_tabs;			/* set true to use tabs for spacing,
 					 * false uses all spaces */
