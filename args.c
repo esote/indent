@@ -46,20 +46,11 @@
 #include <err.h>
 
 /* profile types */
-#define	PRO_SPECIAL	1	/* special case */
-#define	PRO_BOOL	2	/* boolean */
 #define	PRO_INT		3	/* integer */
-#define	PRO_FONT	4	/* troff font */
 
 /* profile specials for booleans */
 #define	ON		1	/* turn it on */
 #define	OFF		0	/* turn it off */
-
-/* profile specials for specials */
-#define	IGN		1	/* ignore it */
-#define	CLI		2	/* case label indent (float) */
-#define	STDIN		3	/* use stdin */
-#define	KEY		4	/* type (keyword) */
 
 char *option_source = "?";
 
@@ -78,15 +69,12 @@ struct pro {
 }           pro[] = {
 	{"cd", PRO_INT, 0, 0, &ps.decl_com_ind },
 	{"ci", PRO_INT, 0, 0, &continuation_indent },
-	{"cli", PRO_SPECIAL, 0, CLI, 0 },
 	{"c", PRO_INT, 33, 0, &ps.com_ind },
 	{"di", PRO_INT, 16, 0, &ps.decl_indent },
 	{"d", PRO_INT, 0, 0, &ps.unindent_displace },
 	{"i", PRO_INT, 8, 0, &ps.ind_size },
 	{"lc", PRO_INT, 0, 0, &block_comment_max_col },
 	{"l", PRO_INT, 78, 0, &max_col },
-	{"npro", PRO_SPECIAL, 0, IGN, 0 },
-	{"st", PRO_SPECIAL, 0, STDIN, 0 },
 	/* whew! */
 	{ 0, 0, 0, 0, 0 }
 };
@@ -142,8 +130,7 @@ set_defaults(void)
      */
     ps.case_indent = 0.0;	/* -cli0.0 */
     for (p = pro; p->p_name; p++)
-	if (p->p_type != PRO_SPECIAL && p->p_type != PRO_FONT)
-	    *p->p_obj = p->p_default;
+	*p->p_obj = p->p_default;
 }
 
 void
@@ -159,51 +146,8 @@ set_option(char *arg)
 found:
     switch (p->p_type) {
 
-    case PRO_SPECIAL:
-	switch (p->p_special) {
-
-	case IGN:
-	    break;
-
-	case CLI:
-	    if (*param_start == 0)
-		goto need_param;
-	    ps.case_indent = atof(param_start);
-	    break;
-
-	case STDIN:
-	    if (input == 0)
-		input = stdin;
-	    if (output == 0)
-		output = stdout;
-	    break;
-
-	case KEY:
-	    if (*param_start == 0)
-		goto need_param;
-	    {
-		char *str;
-		if ((str = strdup(param_start)) == NULL)
-			err(1, NULL);
-		addkey(str, 4);
-	    }
-	    break;
-
-	default:
-	    errx(1, "set_option: internal error: p_special %d", p->p_special);
-	}
-	break;
-
-    case PRO_BOOL:
-	if (p->p_special == OFF)
-	    *p->p_obj = false;
-	else
-	    *p->p_obj = true;
-	break;
-
     case PRO_INT:
 	if (!isdigit((unsigned char)*param_start)) {
-    need_param:
 	    errx(1, "%s: ``%s'' requires a parameter", option_source, arg - 1);
 	}
 	*p->p_obj = atoi(param_start);
