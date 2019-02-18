@@ -69,13 +69,8 @@ dump_line(void)
 	suppress_blanklines = 0;
 	ps.bl_line = false;
 	if (prefix_blankline_requested && not_first_line) {
-	    if (swallow_optional_blanklines) {
-		if (n_real_blanklines == 1)
-		    n_real_blanklines = 0;
-	    } else {
-		if (n_real_blanklines == 0)
-		    n_real_blanklines = 1;
-	    }
+	    if (n_real_blanklines == 0)
+		n_real_blanklines = 1;
 	}
 	while (--n_real_blanklines >= 0)
 	    putc('\n', output);
@@ -167,7 +162,7 @@ dump_line(void)
 		    e_com--;
 		cur_col = pad_output(cur_col, target);
 		if (!ps.box_com) {
-		    if (star_comment_cont && (com_st[1] != '*' || e_com <= com_st + 1)) {
+		    if (com_st[1] != '*' || e_com <= com_st + 1) {
 			if (com_st[1] == ' ' && com_st[0] == ' ' && e_com > com_st + 1)
 			    com_st[1] = '*';
 			else
@@ -386,11 +381,9 @@ pad_output(int current, int target)
 	if (current >= target)
 	    return (current);	/* line is already long enough */
 	curr = current;
-	if (use_tabs) {
-		while ((tcur = ((curr - 1) & tabmask) + tabsize + 1) <= target) {
-			putc('\t', output);
-			curr = tcur;
-		}
+	while ((tcur = ((curr - 1) & tabmask) + tabsize + 1) <= target) {
+		putc('\t', output);
+		curr = tcur;
 	}
 	while (curr++ < target)
 	    putc(' ', output);	/* pad with final blanks */

@@ -132,8 +132,6 @@ char       *bp_save;		/* saved value of buf_ptr when taking input
 char       *be_save;		/* similarly saved value of buf_end */
 
 
-int         pointer_as_binop;
-int         swallow_optional_blanklines;
 int         n_real_blanklines;
 int         prefix_blankline_requested;
 int         postfix_blankline_requested;
@@ -145,16 +143,12 @@ int         code_lines;		/* count of lines with code */
 int         had_eof;		/* set to true when input is exhausted */
 int         line_no;		/* the current line number. */
 int         max_col;		/* the maximum allowable line length */
-int         star_comment_cont;	/* true iff comment continuation lines should
-				 * have stars at the beginning of each line. */
 int         inhibit_formatting;	/* true if INDENT OFF is in effect */
 int         suppress_blanklines;/* set iff following blanklines should be
 				 * suppressed */
 int         continuation_indent;/* set to the indentation between the edge of
 				 * code and continuation lines */
 int         block_comment_max_col;
-int	    use_tabs;			/* set true to use tabs for spacing,
-					 * false uses all spaces */
 
 /* -troff font state information */
 

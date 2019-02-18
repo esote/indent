@@ -715,7 +715,7 @@ check_type:
 	     * : i);
 	     */
 	    dec_ind = ps.decl_indent > 0 ? ps.decl_indent : i;
-	    tabs_to_var = (use_tabs ? ps.decl_indent > 0 : 0);
+	    tabs_to_var = ps.decl_indent > 0;
 	    goto copy_id;
 
 	case ident:		/* got an identifier or constant */

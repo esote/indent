@@ -92,15 +92,7 @@ struct pro {
 	{"lc", PRO_INT, 0, 0, &block_comment_max_col },
 	{"l", PRO_INT, 78, 0, &max_col },
 	{"npro", PRO_SPECIAL, 0, IGN, 0 },
-	{"nps", PRO_BOOL, false, OFF, &pointer_as_binop },
-	{"nsc", PRO_BOOL, true, OFF, &star_comment_cont },
-	{"nsob", PRO_BOOL, false, OFF, &swallow_optional_blanklines },
-	{"nut", PRO_BOOL, true, OFF, &use_tabs},
-	{"ps", PRO_BOOL, false, ON, &pointer_as_binop },
-	{"sc", PRO_BOOL, true, ON, &star_comment_cont },
-	{"sob", PRO_BOOL, false, ON, &swallow_optional_blanklines },
 	{"st", PRO_SPECIAL, 0, STDIN, 0 },
-	{"ut", PRO_BOOL, true, ON, &use_tabs},
 	/* whew! */
 	{ 0, 0, 0, 0, 0 }
 };
