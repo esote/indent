@@ -101,41 +101,41 @@ pr_comment(void)
 
     /* Figure where to align and how to treat the comment */
 
-    if (true) {
-	if (*buf_ptr == '-' || *buf_ptr == '*' || *buf_ptr == '\n') {
-	    ps.box_com = true;	/* a comment with a '-', '*' or newline
-				 * immediately after the / * is assumed to be
-				 * a boxed comment */
-	    break_delim = 0;
-	}
-	if ( /* ps.bl_line && */ (s_lab == e_lab) && (s_code == e_code)) {
-	    /* klg: check only if this line is blank */
-	    /*
-	     * If this (*and previous lines are*) blank, don't put comment way
-	     * out at left
-	     */
-	    ps.com_col = (ps.ind_level - ps.unindent_displace) * ps.ind_size + 1;
-	    adj_max_col = block_comment_max_col;
-	    if (ps.com_col <= 1)
-		ps.com_col = 1;
-	}
-	else {
-	    int    target_col;
-	    break_delim = 0;
-	    if (s_code != e_code)
-		target_col = count_spaces(compute_code_target(), s_code);
-	    else {
-		target_col = 1;
-		if (s_lab != e_lab)
-		    target_col = count_spaces(compute_label_target(), s_lab);
-	    }
-	    ps.com_col = ps.decl_on_line || ps.ind_level == 0 ? ps.decl_com_ind : ps.com_ind;
-	    if (ps.com_col < target_col)
-		ps.com_col = ((target_col + 7) & ~7) + 1;
-	    if (ps.com_col + 24 > adj_max_col)
-		adj_max_col = ps.com_col + 24;
-	}
+    if (*buf_ptr == '-' || *buf_ptr == '*' || *buf_ptr == '\n') {
+	ps.box_com = true;	/* a comment with a '-', '*' or newline
+			 * immediately after the / * is assumed to be
+			 * a boxed comment */
+	break_delim = 0;
     }
+    if (s_lab == e_lab && s_code == e_code) {
+	 /* klg: check only if this line is blank */
+	/*
+	 * If this (*and previous lines are*) blank, don't put comment way
+	 * out at left
+	 */
+	ps.com_col = (ps.ind_level - ps.unindent_displace) * ps.ind_size + 1;
+	adj_max_col = block_comment_max_col;
+	if (ps.com_col <= 1)
+	    ps.com_col = 1;
+    } else {
+	int    target_col;
+	break_delim = 0;
+        if (s_code != e_code)
+	    target_col = count_spaces(compute_code_target(), s_code);
+	else {
+	    target_col = 1;
+	    if (s_lab != e_lab)
+		target_col = count_spaces(compute_label_target(), s_lab);
+	}
+
+	ps.com_col = ps.decl_on_line || ps.ind_level == 0 ? ps.decl_com_ind : ps.com_ind;
+
+	if (ps.com_col < target_col)
+	    ps.com_col = ((target_col + 7) & ~7) + 1;
+	if (ps.com_col + 24 > adj_max_col)
+		adj_max_col = ps.com_col + 24;
+    }
+
     if (ps.box_com) {
 	buf_ptr[-2] = 0;
 	ps.n_comment_delta = 1 - count_spaces(1, in_buffer);

@@ -365,13 +365,11 @@ check_type:
 	      || (ps.its_a_keyword && !ps.sizeof_keyword)))
 		*e_code++ = ' ';
 	    if (ps.in_decl && !ps.block_init) {
-		if (true) {
-		    while ((e_code - s_code) < dec_ind) {
-			CHECK_SIZE_CODE;
-			*e_code++ = ' ';
-		    }
-		    *e_code++ = token[0];
+		while ((e_code - s_code) < dec_ind) {
+		    CHECK_SIZE_CODE;
+		    *e_code++ = ' ';
 		}
+	    *e_code++ = token[0];
 	    } else {
 		*e_code++ = token[0];
 	    }
@@ -429,8 +427,7 @@ check_type:
 	case unary_op:		/* this could be any unary operation */
 	    if (ps.want_blank)
 		*e_code++ = ' ';
-
-	    if (true) {
+	    {
 		char       *res = token;
 
 		if (ps.in_decl && !ps.block_init) {	/* if this is a unary op
@@ -727,43 +724,41 @@ check_type:
 		ps.want_blank = false;
 		if (is_procname == 0) {
 		    if (!ps.block_init) {
-			if (true) {
-			    int cur_dec_ind;
-			    int pos, startpos;
+			int cur_dec_ind;
+			int pos, startpos;
 
-			    /*
-			     * in order to get the tab math right for
-			     * indentations that are not multiples of 8 we
-			     * need to modify both startpos and dec_ind
-			     * (cur_dec_ind) here by eight minus the
-			     * remainder of the current starting column
-			     * divided by eight. This seems to be a
-			     * properly working fix
-			     */
-			    startpos = e_code - s_code;
-			    cur_dec_ind = dec_ind;
-			    pos = startpos;
-			    if ((ps.ind_level * ps.ind_size) % 8 != 0) {
-				pos += (ps.ind_level * ps.ind_size) % 8;
-				cur_dec_ind += (ps.ind_level * ps.ind_size) % 8;
-			    }
-
-			    if (tabs_to_var) {
-				while ((pos & ~7) + 8 <= cur_dec_ind) {
-				    CHECK_SIZE_CODE;
-				    *e_code++ = '\t';
-				    pos = (pos & ~7) + 8;
-				}
-			    }
-			    while (pos < cur_dec_ind) {
-				CHECK_SIZE_CODE;
-				*e_code++ = ' ';
-				pos++;
-			    }
-			    if (ps.want_blank && e_code - s_code == startpos)
-				*e_code++ = ' ';
-			    ps.want_blank = false;
+			/*
+			 * in order to get the tab math right for
+			 * indentations that are not multiples of 8 we
+			 * need to modify both startpos and dec_ind
+			 * (cur_dec_ind) here by eight minus the
+			 * remainder of the current starting column
+			 * divided by eight. This seems to be a
+			 * properly working fix
+			 */
+			startpos = e_code - s_code;
+			cur_dec_ind = dec_ind;
+			pos = startpos;
+			if ((ps.ind_level * ps.ind_size) % 8 != 0) {
+			    pos += (ps.ind_level * ps.ind_size) % 8;
+			    cur_dec_ind += (ps.ind_level * ps.ind_size) % 8;
 			}
+
+			if (tabs_to_var) {
+			    while ((pos & ~7) + 8 <= cur_dec_ind) {
+				CHECK_SIZE_CODE;
+				*e_code++ = '\t';
+				pos = (pos & ~7) + 8;
+			    }
+			}
+			while (pos < cur_dec_ind) {
+			    CHECK_SIZE_CODE;
+			    *e_code++ = ' ';
+			    pos++;
+			}
+			if (ps.want_blank && e_code - s_code == startpos)
+			    *e_code++ = ' ';
+			ps.want_blank = false;
 		    }
 		}
 		else {

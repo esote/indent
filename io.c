@@ -377,17 +377,15 @@ pad_output(int current, int target)
     int curr;		/* internal column pointer */
     int tcur;
 
-    if (true) {
-	if (current >= target)
+    if (current >= target)
 	    return (current);	/* line is already long enough */
-	curr = current;
-	while ((tcur = ((curr - 1) & tabmask) + tabsize + 1) <= target) {
-		putc('\t', output);
-		curr = tcur;
-	}
-	while (curr++ < target)
-	    putc(' ', output);	/* pad with final blanks */
+    curr = current;
+    while ((tcur = ((curr - 1) & tabmask) + tabsize + 1) <= target) {
+	putc('\t', output);
+	curr = tcur;
     }
+    while (curr++ < target)
+	putc(' ', output);	/* pad with final blanks */
     return (target);
 }
 

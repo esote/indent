@@ -41,10 +41,6 @@ void reduce(void);
 void
 parse(int tk)			/* the code for the construct scanned */
 {
-#ifdef debug
-    printf("%2d - %s\n", tk, token);
-#endif
-
     while (ps.p_stack[ps.tos] == ifhead && tk != elselit) {
 	/* true if we have an if without an else */
 	ps.p_stack[ps.tos] = stmt;	/* apply the if(..) stmt ::= stmt
@@ -178,12 +174,6 @@ parse(int tk)			/* the code for the construct scanned */
     }				/* end of switch */
 
     reduce();			/* see if any reduction can be done */
-
-#ifdef debug
-    for (i = 1; i <= ps.tos; ++i)
-	printf("(%d %d)", ps.p_stack[i], ps.il[i]);
-    printf("\n");
-#endif
 
     return;
 }
