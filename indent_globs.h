@@ -133,18 +133,12 @@ char       *be_save;		/* similarly saved value of buf_end */
 
 
 int         pointer_as_binop;
-int         blanklines_after_declarations;
-int         blanklines_before_blockcomments;
-int         blanklines_after_procs;
-int         blanklines_around_conditional_compilation;
 int         swallow_optional_blanklines;
 int         n_real_blanklines;
 int         prefix_blankline_requested;
 int         postfix_blankline_requested;
 int         break_comma;	/* when true and not in parens, break after a
 				 * comma */
-int         btype_2;		/* when true, brace should be on same line as
-				 * if, while, etc */
 float       case_ind;		/* indentation level to be used for a "case
 				 * n:" */
 int         code_lines;		/* count of lines with code */
@@ -153,10 +147,8 @@ int         line_no;		/* the current line number. */
 int         max_col;		/* the maximum allowable line length */
 int         verbose;		/* when true, non-essential error messages are
 				 * printed */
-int         cuddle_else;	/* true if else should cuddle up to '}' */
 int         star_comment_cont;	/* true iff comment continuation lines should
 				 * have stars at the beginning of each line. */
-int         comment_delimiter_on_blankline;
 int         troff;		/* true iff were generating troff input */
 int         procnames_start_line;	/* if true, the names of procedures
 					 * being defined get placed in column
@@ -176,28 +168,7 @@ int         continuation_indent;/* set to the indentation between the edge of
 				 * code and continuation lines */
 int         lineup_to_parens;	/* if true, continued code within parens will
 				 * be lined up to the open paren */
-int         Bill_Shannon;	/* true iff a blank should always be inserted
-				 * after sizeof */
-int         blanklines_after_declarations_at_proctop;	/* This is vaguely
-							 * similar to
-							 * blanklines_after_decla
-							 * rations except that
-							 * it only applies to
-							 * the first set of
-							 * declarations in a
-							 * procedure (just after
-							 * the first '{') and it
-							 * causes a blank line
-							 * to be generated even
-							 * if there are no
-							 * declarations */
 int         block_comment_max_col;
-int         extra_expression_indent;	/* True if continuation lines from the
-					 * expression part of "if(e)",
-					 * "while(e)", "for(e;e;e)" should be
-					 * indented an extra tab stop so that
-					 * they don't conflict with the code
-					 * that follows */
 int	    use_tabs;			/* set true to use tabs for spacing,
 					 * false uses all spaces */
 
@@ -274,8 +245,6 @@ struct parser_state {
 				 * forces a following operator to be unary */
     int         leave_comma;	/* if true, never break declarations after
 				 * commas */
-    int         ljust_decl;	/* true if declarations should be left
-				 * justified */
     int         out_coms;	/* the number of comments processed, set by
 				 * pr_comment */
     int         out_lines;	/* the number of lines written, set by

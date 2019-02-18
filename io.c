@@ -249,12 +249,7 @@ dump_line(void)
 	    putc('\n', output);
 inhibit_newline:
 	++ps.out_lines;
-	if (ps.just_saw_decl == 1 && blanklines_after_declarations) {
-	    prefix_blankline_requested = 1;
-	    ps.just_saw_decl = 0;
-	}
-	else
-	    prefix_blankline_requested = postfix_blankline_requested;
+        prefix_blankline_requested = postfix_blankline_requested;
 	postfix_blankline_requested = 0;
     }
     ps.decl_on_line = ps.in_decl;	/* if we are in the middle of a

@@ -59,7 +59,7 @@ parse(int tk)			/* the code for the construct scanned */
 				 * input */
 
     case decl:			/* scanned a declaration word */
-	ps.search_brace = btype_2;
+	ps.search_brace = true;
 	/* indicate that following brace should be on same line */
 	if (ps.p_stack[ps.tos] != decl) {	/* only put one declaration
 						 * onto stack */
@@ -67,16 +67,6 @@ parse(int tk)			/* the code for the construct scanned */
 				 * forced after comma */
 	    ps.p_stack[++ps.tos] = decl;
 	    ps.il[ps.tos] = ps.i_l_follow;
-
-	    if (ps.ljust_decl) {/* only do if we want left justified
-				 * declarations */
-		ps.ind_level = 0;
-		for (i = ps.tos - 1; i > 0; --i)
-		    if (ps.p_stack[i] == decl)
-			++ps.ind_level;	/* indentation is number of
-					 * declaration levels deep we are */
-		ps.i_l_follow = ps.ind_level;
-	    }
 	}
 	break;
 
@@ -88,7 +78,7 @@ parse(int tk)			/* the code for the construct scanned */
 	ps.p_stack[++ps.tos] = tk;
 	ps.il[ps.tos] = ps.ind_level = ps.i_l_follow;
 	++ps.i_l_follow;	/* subsequent statements should be indented 1 */
-	ps.search_brace = btype_2;
+	ps.search_brace = true;
 	break;
 
     case lbrace:		/* scanned { */
@@ -132,7 +122,7 @@ parse(int tk)			/* the code for the construct scanned */
 	    ps.p_stack[++ps.tos] = whilestmt;
 	    ps.il[ps.tos] = ps.i_l_follow;
 	    ++ps.i_l_follow;
-	    ps.search_brace = btype_2;
+	    ps.search_brace = true;
 	}
 
 	break;
@@ -148,7 +138,7 @@ parse(int tk)			/* the code for the construct scanned */
 						 * be in 1 level */
 	    ps.p_stack[ps.tos] = elsehead;
 	    /* remember if with else */
-	    ps.search_brace = btype_2 | ps.else_if;
+	    ps.search_brace = true | ps.else_if;
 	}
 	break;
 
@@ -172,7 +162,7 @@ parse(int tk)			/* the code for the construct scanned */
 							 * switch */
 	ps.i_l_follow += ps.case_indent + 1;	/* statements should be two
 						 * levels in */
-	ps.search_brace = btype_2;
+	ps.search_brace = true;
 	break;
 
     case semicolon:		/* this indicates a simple stmt */

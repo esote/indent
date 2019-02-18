@@ -81,7 +81,7 @@ pr_comment(void)
 				 * a unix-style comment. 0 means only blanks
 				 * since / *, 1 means regular style comment, 2
 				 * means unix style comment */
-    int         break_delim = comment_delimiter_on_blankline;
+    int         break_delim = true;
     int         l_just_saw_decl = ps.just_saw_decl;
     /*
      * int         ps.last_nl = 0;	 true iff the last significant thing
@@ -217,8 +217,6 @@ pr_comment(void)
 			break_delim = 2;
 			e_com = s_com + 2;
 			*e_com = 0;
-			if (blanklines_before_blockcomments)
-			    prefix_blankline_requested = 1;
 			dump_line();
 			e_com = t;
 			s_com[0] = s_com[1] = s_com[2] = ' ';
@@ -318,8 +316,6 @@ pr_comment(void)
 		    break_delim = 2;
 		    e_com = s_com + 2;
 		    *e_com = 0;
-		    if (blanklines_before_blockcomments)
-			prefix_blankline_requested = 1;
 		    dump_line();
 		    e_com = t;
 		    s_com[0] = s_com[1] = s_com[2] = ' ';
@@ -372,8 +368,6 @@ pr_comment(void)
 		    break_delim = 2;
 		    e_com = s_com + 2;
 		    *e_com = 0;
-		    if (blanklines_before_blockcomments)
-			prefix_blankline_requested = 1;
 		    dump_line();
 		    e_com = t;
 		    s_com[0] = s_com[1] = s_com[2] = ' ';

@@ -44,10 +44,6 @@
 #include <errno.h>
 #include <err.h>
 
-char       *in_name = "Standard Input";	/* will always point to name of input
-					 * file */
-char       *out_name = "Standard Output";	/* will always point to name
-						 * of output file */
 int
 main(int argc, char **argv)
 {
@@ -128,16 +124,14 @@ main(int argc, char **argv)
     bp_save = 0;
     be_save = 0;
 
-    output = 0;
+    input = stdin;
+    output = stdout;
 
     /*--------------------------------------------------*\
     |   		COMMAND LINE SCAN		 |
     \*--------------------------------------------------*/
 
     set_defaults();
-
-    input = stdin;
-    output = stdout;
 
     if (ps.com_ind <= 1)
 	ps.com_ind = 2;		/* dont put normal comments before column 2 */
@@ -164,7 +158,7 @@ main(int argc, char **argv)
     if (block_comment_max_col <= 0)
 	block_comment_max_col = max_col;
     if (ps.decl_com_ind <= 0)	/* if not specified by user, set this */
-	ps.decl_com_ind = ps.ljust_decl ? (ps.com_ind <= 10 ? 2 : ps.com_ind - 8) : ps.com_ind;
+	ps.decl_com_ind = ps.com_ind;
     if (continuation_indent == 0)
 	continuation_indent = ps.ind_size;
     fill_buffer();	/* get first batch of stuff into input buffer */
@@ -186,15 +180,7 @@ main(int argc, char **argv)
 	if (col > ps.ind_size)
 	    ps.ind_level = ps.i_l_follow = col / ps.ind_size;
     }
-    if (troff) {
-	char *p = in_name,
-	           *beg = in_name;
 
-	while (*p)
-	    if (*p++ == '/')
-		beg = p;
-	fprintf(output, ".Fn \"%s\"\n", beg);
-    }
     /*
      * START OF MAIN LOOP
      */
@@ -236,12 +222,10 @@ main(int argc, char **argv)
 		    ps.search_brace = false;
 		    goto check_type;
 		}
-		if (btype_2) {
-		    save_com[0] = '{';	/* we either want to put the brace
+		save_com[0] = '{';	/* we either want to put the brace
 					 * right after the if */
-		    goto sw_buffer;	/* go to common code to get out of
+		goto sw_buffer;	/* go to common code to get out of
 					 * this loop */
-		}
 	    case comment:	/* we have a comment, so we must copy it into
 				 * the buffer */
 		if (!flushed_nl || sc_end != 0) {
@@ -357,7 +341,7 @@ check_type:
 		(type_code != form_feed)) {
 	    if (force_nl &&
 		    (type_code != semicolon) &&
-		    (type_code != lbrace || !btype_2)) {
+		    (type_code != lbrace)) {
 		/* we should force a broken line here */
 		if (verbose && !flushed_nl)
 		    diag(0, "Line broken");
@@ -413,7 +397,7 @@ check_type:
 	    ++ps.p_l_follow;	/* count parens to make Healy happy */
 	    if (ps.want_blank && *token != '[' &&
 		    (ps.last_token != ident || proc_calls_space
-	      || (ps.its_a_keyword && (!ps.sizeof_keyword || Bill_Shannon))))
+	      || (ps.its_a_keyword && !ps.sizeof_keyword)))
 		*e_code++ = ' ';
 	    if (ps.in_decl && !ps.block_init)
 		if (troff && !ps.dumped_decl_indent && !is_procname && ps.last_token == decl) {
@@ -433,9 +417,6 @@ check_type:
 	    else
 		*e_code++ = token[0];
 	    ps.paren_indents[ps.p_l_follow - 1] = e_code - s_code;
-	    if (sp_sw && ps.p_l_follow == 1 && extra_expression_indent
-		    && ps.paren_indents[0] < 2 * ps.ind_size)
-		ps.paren_indents[0] = 2 * ps.ind_size;
 	    ps.want_blank = false;
 	    if (ps.in_or_st && *token == '(' && ps.tos <= 2) {
 		/*
@@ -479,7 +460,7 @@ check_type:
 
 		parse(hd_type);	/* let parser worry about if, or whatever */
 	    }
-	    ps.search_brace = btype_2;	/* this should insure that constructs
+	    ps.search_brace = true;	/* this should insure that constructs
 					 * such as main(){...} and int[]{...}
 					 * have their braces put in the right
 					 * place */
@@ -666,11 +647,7 @@ check_type:
 		ps.block_init_level++;
 
 	    if (s_code != e_code && !ps.block_init) {
-		if (!btype_2) {
-		    dump_line();
-		    ps.want_blank = false;
-		}
-		else if (ps.in_parameter_declaration && !ps.in_or_st) {
+		if (ps.in_parameter_declaration && !ps.in_or_st) {
 		    ps.i_l_follow = 0;
 		    dump_line();
 		    ps.want_blank = false;
@@ -699,11 +676,6 @@ check_type:
 	    }
 	    else {
 		ps.decl_on_line = false;
-		/* we can't be in the middle of a declaration, so don't do
-		 * special indentation of comments */
-		if (blanklines_after_declarations_at_proctop
-			&& ps.in_parameter_declaration)
-		    postfix_blankline_requested = 1;
 		ps.in_parameter_declaration = 0;
 	    }
 	    dec_ind = 0;
@@ -746,10 +718,8 @@ check_type:
 	    }
 	    prefix_blankline_requested = 0;
 	    parse(rbrace);	/* let parser know about this */
-	    ps.search_brace = cuddle_else && ps.p_stack[ps.tos] == ifhead
+	    ps.search_brace = ps.p_stack[ps.tos] == ifhead
 		&& ps.il[ps.tos] >= ps.ind_level;
-	    if (ps.tos <= 1 && blanklines_after_procs && ps.dec_nest <= 0)
-		postfix_blankline_requested = 1;
 	    break;
 
 	case swstmt:		/* got keyword "switch" */
@@ -772,7 +742,7 @@ check_type:
 	case sp_nparen:	/* got else, do */
 	    ps.in_stmt = false;
 	    if (*token == 'e') {
-		if (e_code != s_code && (!cuddle_else || e_code[-1] != '}')) {
+		if (e_code != s_code && e_code[-1] != '}') {
 		    if (verbose)
 			diag(0, "Line broken");
 		    dump_line();/* make sure this starts a line */
@@ -1029,12 +999,6 @@ check_type:
 	    }
 
 	    if (strncmp(s_lab, "#if", 3) == 0) {
-		if (blanklines_around_conditional_compilation) {
-		    int    c;
-		    prefix_blankline_requested++;
-		    while ((c = getc(input)) == '\n');
-		    ungetc(c, input);
-		}
 		if (ifdef_level < sizeof state_stack / sizeof state_stack[0]) {
 		    match_state[ifdef_level].tos = -1;
 		    state_stack[ifdef_level++] = ps;
@@ -1054,10 +1018,6 @@ check_type:
 		    diag(1, "Unmatched #endif");
 		else {
 		    ifdef_level--;
-		}
-		if (blanklines_around_conditional_compilation) {
-		    postfix_blankline_requested++;
-		    n_real_blanklines = 0;
 		}
 	    }
 	    break;		/* subsequent processing of the newline
