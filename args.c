@@ -76,7 +76,6 @@ struct pro {
     int         p_special;	/* depends on type */
     int        *p_obj;		/* the associated variable */
 }           pro[] = {
-	{"bc", PRO_BOOL, true, OFF, &ps.leave_comma },
 	{"cd", PRO_INT, 0, 0, &ps.decl_com_ind },
 	{"ci", PRO_INT, 0, 0, &continuation_indent },
 	{"cli", PRO_SPECIAL, 0, CLI, 0 },
@@ -96,7 +95,6 @@ struct pro {
 	{"lc", PRO_INT, 0, 0, &block_comment_max_col },
 	{"lp", PRO_BOOL, true, ON, &lineup_to_parens },
 	{"l", PRO_INT, 78, 0, &max_col },
-	{"nbc", PRO_BOOL, true, ON, &ps.leave_comma },
 	{"nei", PRO_BOOL, true, OFF, &ps.else_if },
 	{"nfc1", PRO_BOOL, true, OFF, &format_col1_comments },
 	{"nip", PRO_BOOL, true, OFF, &ps.indent_parameters },

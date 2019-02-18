@@ -240,8 +240,6 @@ struct parser_state {
 				 * middle of a stmt */
     int         last_u_d;	/* set to true after scanning a token which
 				 * forces a following operator to be unary */
-    int         leave_comma;	/* if true, never break declarations after
-				 * commas */
     int         out_coms;	/* the number of comments processed, set by
 				 * pr_comment */
     int         out_lines;	/* the number of lines written, set by

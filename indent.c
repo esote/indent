@@ -355,7 +355,7 @@ check_type:
 
 	case newline:
 	    if (ps.last_token != comma || ps.p_l_follow > 0
-		    || !ps.leave_comma || ps.block_init || !break_comma || s_com != e_com) {
+		    || ps.block_init || !break_comma || s_com != e_com) {
 		dump_line();
 		ps.want_blank = false;
 	    }
@@ -816,7 +816,7 @@ check_type:
 	    if (ps.p_l_follow == 0) {
 		if (ps.block_init_level <= 0)
 		    ps.block_init = 0;
-		if (break_comma && (!ps.leave_comma || compute_code_target() + (e_code - s_code) > max_col - 8))
+		if (break_comma && (compute_code_target() + (e_code - s_code) > max_col - 8))
 		    force_nl = true;
 	    }
 	    break;
