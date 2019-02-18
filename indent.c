@@ -97,7 +97,6 @@ main(int argc, char **argv)
     combuf[0] = codebuf[0] = labbuf[0] = ' ';	/* set up code, label, and
 						 * comment buffers */
     combuf[1] = codebuf[1] = labbuf[1] = '\0';
-    ps.else_if = 1;		/* Default else-if special processing to on */
     s_lab = e_lab = labbuf + 1;
     s_code = e_code = codebuf + 1;
     s_com = e_com = combuf + 1;
@@ -248,7 +247,7 @@ main(int argc, char **argv)
 				 * put back */
 		    force_nl = true;
 		if ((type_code == sp_paren && *token == 'i'
-		     && last_else && ps.else_if) ||
+		     && last_else) ||
 		    (type_code == sp_nparen && *token == 'e'
 		     && e_code != s_code && e_code[-1] == '}'))
 			force_nl = false;

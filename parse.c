@@ -69,7 +69,7 @@ parse(int tk)			/* the code for the construct scanned */
 	break;
 
     case ifstmt:		/* scanned if (...) */
-	if (ps.p_stack[ps.tos] == elsehead && ps.else_if)	/* "else if ..." */
+	if (ps.p_stack[ps.tos] == elsehead)	/* "else if ..." */
 	    ps.i_l_follow = ps.il[ps.tos];
     case dolit:		/* 'do' */
     case forstmt:		/* for (...) */
@@ -136,7 +136,7 @@ parse(int tk)			/* the code for the construct scanned */
 						 * be in 1 level */
 	    ps.p_stack[ps.tos] = elsehead;
 	    /* remember if with else */
-	    ps.search_brace = true | ps.else_if;
+	    ps.search_brace = true;
 	}
 	break;
 

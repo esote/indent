@@ -264,8 +264,6 @@ struct parser_state {
     int         want_blank;	/* set to true when the following token should
 				 * be prefixed by a blank. (Said prefixing is
 				 * ignored in some cases.) */
-    int         else_if;	/* True iff else if pairs should be handled
-				 * specially */
     int         decl_indent;	/* column to indent declared identifiers to */
     int         its_a_keyword;
     int         sizeof_keyword;
