@@ -41,8 +41,6 @@ void reduce(void);
 void
 parse(int tk)			/* the code for the construct scanned */
 {
-    int         i;
-
 #ifdef debug
     printf("%2d - %s\n", tk, token);
 #endif

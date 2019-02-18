@@ -108,7 +108,6 @@ struct pro {
 	{"nsc", PRO_BOOL, true, OFF, &star_comment_cont },
 	{"nsob", PRO_BOOL, false, OFF, &swallow_optional_blanklines },
 	{"nut", PRO_BOOL, true, OFF, &use_tabs},
-	{"nv", PRO_BOOL, false, OFF, &verbose },
 	{"pcs", PRO_BOOL, false, ON, &proc_calls_space },
 	{"psl", PRO_BOOL, true, ON, &procnames_start_line },
 	{"ps", PRO_BOOL, false, ON, &pointer_as_binop },
@@ -117,7 +116,6 @@ struct pro {
 	{"st", PRO_SPECIAL, 0, STDIN, 0 },
 	{"troff", PRO_BOOL, false, ON, &troff },
 	{"ut", PRO_BOOL, true, ON, &use_tabs},
-	{"v", PRO_BOOL, false, ON, &verbose },
 	/* whew! */
 	{ 0, 0, 0, 0, 0 }
 };
@@ -139,8 +137,6 @@ scan_profile(FILE *f)
 		;
 	if (p != buf) {
 	    *p = 0;
-	    if (verbose)
-		printf("profile: %s\n", buf);
 	    set_option(buf);
 	}
 	else if (i == EOF)

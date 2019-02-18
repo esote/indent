@@ -285,9 +285,6 @@ main(int argc, char **argv)
 				 * read from the buffer */
 		    *sc_end++ = '\n';
 		    *sc_end++ = ' ';
-		    if (verbose && !flushed_nl)	/* print error msg if the line
-						 * was not already broken */
-			diag(0, "Line broken");
 		    flushed_nl = false;
 		}
 		for (t_ptr = token; *t_ptr; ++t_ptr)
@@ -325,12 +322,6 @@ check_type:
 	    if (ps.tos > 1)	/* check for balanced braces */
 		diag(1, "Missing braces at end of file.");
 
-	    if (verbose) {
-		printf("There were %d output lines and %d comments\n",
-		       ps.out_lines, ps.out_coms);
-		printf("(Lines with comments)/(Lines with code): %6.3f\n",
-		       (1.0 * ps.com_lines) / code_lines);
-	    }
 	    fflush(output);
 	    exit(found_err);
 	}
@@ -343,8 +334,6 @@ check_type:
 		    (type_code != semicolon) &&
 		    (type_code != lbrace)) {
 		/* we should force a broken line here */
-		if (verbose && !flushed_nl)
-		    diag(0, "Line broken");
 		flushed_nl = false;
 		dump_line();
 		ps.want_blank = false;	/* dont insert blank at line start */
@@ -702,8 +691,6 @@ check_type:
 	    ps.block_init_level--;
 	    if (s_code != e_code && !ps.block_init) {	/* '}' must be first on
 							 * line */
-		if (verbose)
-		    diag(0, "Line broken");
 		dump_line();
 	    }
 	    *e_code++ = '}';
@@ -743,8 +730,6 @@ check_type:
 	    ps.in_stmt = false;
 	    if (*token == 'e') {
 		if (e_code != s_code && e_code[-1] != '}') {
-		    if (verbose)
-			diag(0, "Line broken");
 		    dump_line();/* make sure this starts a line */
 		    ps.want_blank = false;
 		}
@@ -754,8 +739,6 @@ check_type:
 	    }
 	    else {
 		if (e_code != s_code) {	/* make sure this starts a line */
-		    if (verbose)
-			diag(0, "Line broken");
 		    dump_line();
 		    ps.want_blank = false;
 		}

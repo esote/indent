@@ -145,8 +145,6 @@ int         code_lines;		/* count of lines with code */
 int         had_eof;		/* set to true when input is exhausted */
 int         line_no;		/* the current line number. */
 int         max_col;		/* the maximum allowable line length */
-int         verbose;		/* when true, non-essential error messages are
-				 * printed */
 int         star_comment_cont;	/* true iff comment continuation lines should
 				 * have stars at the beginning of each line. */
 int         troff;		/* true iff were generating troff input */
