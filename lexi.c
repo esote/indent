@@ -349,12 +349,6 @@ lexi(void)
     case '\'':			/* start of quoted character */
     case '"':			/* start of string */
 	qchar = *token;
-	if (troff) {
-	    e_token[-1] = '`';
-	    if (qchar == '"')
-		*e_token++ = '`';
-	    e_token = chfont(&bodyf, &stringf, e_token);
-	}
 	do {			/* copy the string */
 	    while (1) {		/* move one character or [/<char>]<char> */
 		if (*buf_ptr == '\n') {
@@ -370,11 +364,6 @@ lexi(void)
 		if (*e_token == BACKSLASH) {	/* if escape, copy extra char */
 		    if (*buf_ptr == '\n')	/* check for escaped newline */
 			++line_no;
-		    if (troff) {
-			*++e_token = BACKSLASH;
-			if (*buf_ptr == BACKSLASH)
-			    *++e_token = BACKSLASH;
-		    }
 		    *++e_token = *buf_ptr++;
 		    ++e_token;	/* we must increment this again because we
 				 * copied two chars */
@@ -385,11 +374,6 @@ lexi(void)
 		    break;	/* we copied one character */
 	    }			/* end of while (1) */
 	} while (*e_token++ != qchar);
-	if (troff) {
-	    e_token = chfont(&stringf, &bodyf, e_token - 1);
-	    if (qchar == '"')
-		*e_token++ = '\'';
-	}
 stop_lit:
 	code = ident;
 	break;

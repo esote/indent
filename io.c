@@ -54,13 +54,6 @@ dump_line(void)
     static int  not_first_line;
 
     if (ps.procname[0]) {
-	if (troff) {
-	    if (comment_open) {
-		comment_open = 0;
-		fprintf(output, ".*/\n");
-	    }
-	    fprintf(output, ".Pr \"%s\"\n", ps.procname);
-	}
 	ps.ind_level = 0;
 	ps.procname[0] = 0;
     }
@@ -150,63 +143,7 @@ dump_line(void)
 	    cur_col = count_spaces(cur_col, s_code);
 	}
 	if (s_com != e_com) {
-	    if (troff) {
-		int   all_here = 0;
-		char *p;
-
-		if (e_com[-1] == '/' && e_com[-2] == '*')
-		    e_com -= 2, all_here++;
-		while (e_com > s_com && e_com[-1] == ' ')
-		    e_com--;
-		*e_com = 0;
-		p = s_com;
-		while (*p == ' ')
-		    p++;
-		if (p[0] == '/' && p[1] == '*')
-		    p += 2, all_here++;
-		else if (p[0] == '*')
-		    p += p[1] == '/' ? 2 : 1;
-		while (*p == ' ')
-		    p++;
-		if (*p == 0)
-		    goto inhibit_newline;
-		if (comment_open < 2 && ps.box_com) {
-		    comment_open = 0;
-		    fprintf(output, ".*/\n");
-		}
-		if (comment_open == 0) {
-		    if ('a' <= *p && *p <= 'z')
-			*p = *p + 'A' - 'a';
-		    if (e_com - p < 50 && all_here == 2) {
-			char *follow = p;
-			fprintf(output, "\n.nr C! \\w\1");
-			while (follow < e_com) {
-			    switch (*follow) {
-			    case '\n':
-				putc(' ', output);
-			    case 1:
-				break;
-			    case '\\':
-				putc('\\', output);
-			    default:
-				putc(*follow, output);
-			    }
-			    follow++;
-			}
-			putc(1, output);
-		    }
-		    fprintf(output, "\n./* %dp %d %dp\n",
-			    ps.com_col * 7,
-			    (s_code != e_code || s_lab != e_lab) - ps.box_com,
-			    target_col * 7);
-		}
-		comment_open = 1 + ps.box_com;
-		while (*p) {
-		    if (*p == BACKSLASH)
-			putc(BACKSLASH, output);
-		    putc(*p++, output);
-		}
-	    } else {		/* print comment, if any */
+	    if (true) {		/* print comment, if any */
 		int   target = ps.com_col;
 		char *com_st = s_com;
 
@@ -247,7 +184,6 @@ dump_line(void)
 	    putc('\014', output);
 	else
 	    putc('\n', output);
-inhibit_newline:
 	++ps.out_lines;
         prefix_blankline_requested = postfix_blankline_requested;
 	postfix_blankline_requested = 0;
@@ -447,9 +383,7 @@ pad_output(int current, int target)
     int curr;		/* internal column pointer */
     int tcur;
 
-    if (troff)
-	fprintf(output, "\\h'|%dp'", (target - 1) * 7);
-    else {
+    if (true) {
 	if (current >= target)
 	    return (current);	/* line is already long enough */
 	curr = current;

@@ -135,26 +135,6 @@ main(int argc, char **argv)
 
     if (ps.com_ind <= 1)
 	ps.com_ind = 2;		/* dont put normal comments before column 2 */
-    if (troff) {
-	if (bodyf.font[0] == 0)
-	    parsefont(&bodyf, "R");
-	if (scomf.font[0] == 0)
-	    parsefont(&scomf, "I");
-	if (blkcomf.font[0] == 0)
-	    blkcomf = scomf, blkcomf.size += 2;
-	if (boxcomf.font[0] == 0)
-	    boxcomf = blkcomf;
-	if (stringf.font[0] == 0)
-	    parsefont(&stringf, "L");
-	if (keywordf.font[0] == 0)
-	    parsefont(&keywordf, "B");
-	writefdef(&bodyf, 'B');
-	writefdef(&scomf, 'C');
-	writefdef(&blkcomf, 'L');
-	writefdef(&boxcomf, 'X');
-	writefdef(&stringf, 'S');
-	writefdef(&keywordf, 'K');
-    }
     if (block_comment_max_col <= 0)
 	block_comment_max_col = max_col;
     if (ps.decl_com_ind <= 0)	/* if not specified by user, set this */
@@ -388,23 +368,18 @@ check_type:
 		    (ps.last_token != ident || proc_calls_space
 	      || (ps.its_a_keyword && !ps.sizeof_keyword)))
 		*e_code++ = ' ';
-	    if (ps.in_decl && !ps.block_init)
-		if (troff && !ps.dumped_decl_indent && !is_procname && ps.last_token == decl) {
-		    ps.dumped_decl_indent = 1;
-		    snprintf(e_code, (l_code - e_code) + 5, 
-			"\n.Du %dp+\200p \"%s\"\n", dec_ind * 7, token);
-		    e_code += strlen(e_code);
-		    CHECK_SIZE_CODE;
-		}
-		else {
+	    if (ps.in_decl && !ps.block_init) {
+		if (true) {
 		    while ((e_code - s_code) < dec_ind) {
 			CHECK_SIZE_CODE;
 			*e_code++ = ' ';
 		    }
 		    *e_code++ = token[0];
 		}
-	    else
+	    } else {
 		*e_code++ = token[0];
+	    }
+
 	    ps.paren_indents[ps.p_l_follow - 1] = e_code - s_code;
 	    ps.want_blank = false;
 	    if (ps.in_or_st && *token == '(' && ps.tos <= 2) {
@@ -459,14 +434,7 @@ check_type:
 	    if (ps.want_blank)
 		*e_code++ = ' ';
 
-	    if (troff && !ps.dumped_decl_indent && ps.in_decl && !is_procname) {
-		snprintf(e_code, (l_code - e_code) + 5,
-		    "\n.Du %dp+\200p \"%s\"\n", dec_ind * 7, token);
-		ps.dumped_decl_indent = 1;
-		e_code += strlen(e_code);
-		CHECK_SIZE_CODE;
-	    }
-	    else {
+	    if (true) {
 		char       *res = token;
 
 		if (ps.in_decl && !ps.block_init) {	/* if this is a unary op
@@ -479,8 +447,6 @@ check_type:
 			*e_code++ = ' ';	/* pad it */
 		    }
 		}
-		if (troff && token[0] == '-' && token[1] == '>')
-		    res = "\\(->";
 		for (t_ptr = res; *t_ptr; ++t_ptr) {
 		    CHECK_SIZE_CODE;
 		    *e_code++ = *t_ptr;
@@ -495,27 +461,6 @@ check_type:
 	    {
 		char       *res = token;
 
-		if (troff)
-		    switch (token[0]) {
-		    case '<':
-			if (token[1] == '=')
-			    res = "\\(<=";
-			break;
-		    case '>':
-			if (token[1] == '=')
-			    res = "\\(>=";
-			break;
-		    case '!':
-			if (token[1] == '=')
-			    res = "\\(!=";
-			break;
-		    case '|':
-			if (token[1] == '|')
-			    res = "\\(br\\(br";
-			else if (token[1] == 0)
-			    res = "\\(br";
-			break;
-		    }
 		for (t_ptr = res; *t_ptr; ++t_ptr) {
 		    CHECK_SIZE_CODE;
 		    *e_code++ = *t_ptr;	/* move the operator */
@@ -786,13 +731,7 @@ check_type:
 		ps.want_blank = false;
 		if (is_procname == 0 || !procnames_start_line) {
 		    if (!ps.block_init) {
-			if (troff && !ps.dumped_decl_indent) {
-			    snprintf(e_code, (l_code - e_code) + 5,
-				"\n.De %dp+\200p\n", dec_ind * 7);
-			    ps.dumped_decl_indent = 1;
-			    e_code += strlen(e_code);
-			    CHECK_SIZE_CODE;
-			} else {
+			if (true) {
 			    int cur_dec_ind;
 			    int pos, startpos;
 
@@ -848,21 +787,12 @@ check_type:
     copy_id:
 	    if (ps.want_blank)
 		*e_code++ = ' ';
-	    if (troff && ps.its_a_keyword) {
-		e_code = chfont(&bodyf, &keywordf, e_code);
-		for (t_ptr = token; *t_ptr; ++t_ptr) {
-		    CHECK_SIZE_CODE;
-		    *e_code++ = keywordf.allcaps &&
-		      islower((unsigned char)*t_ptr) ?
-		      toupper((unsigned char)*t_ptr) : *t_ptr;
-		}
-		e_code = chfont(&keywordf, &bodyf, e_code);
+
+	    for (t_ptr = token; *t_ptr; ++t_ptr) {
+		CHECK_SIZE_CODE;
+		*e_code++ = *t_ptr;
 	    }
-	    else
-		for (t_ptr = token; *t_ptr; ++t_ptr) {
-		    CHECK_SIZE_CODE;
-		    *e_code++ = *t_ptr;
-		}
+
 	    ps.want_blank = true;
 	    break;
 
@@ -915,8 +845,6 @@ check_type:
 			fill_buffer();
 		    switch (*e_lab++) {
 		    case BACKSLASH:
-			if (troff)
-			    *e_lab++ = BACKSLASH;
 			if (!in_comment) {
 			    *e_lab++ = *buf_ptr++;
 			    if (buf_ptr >= buf_end)

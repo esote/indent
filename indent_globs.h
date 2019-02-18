@@ -147,7 +147,6 @@ int         line_no;		/* the current line number. */
 int         max_col;		/* the maximum allowable line length */
 int         star_comment_cont;	/* true iff comment continuation lines should
 				 * have stars at the beginning of each line. */
-int         troff;		/* true iff were generating troff input */
 int         procnames_start_line;	/* if true, the names of procedures
 					 * being defined get placed in column
 					 * 1 (ie. a newline is placed between

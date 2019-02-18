@@ -158,15 +158,10 @@ pr_comment(void)
 	*e_com++ = ' ';
 
     *e_com = '\0';
-    if (troff) {
-	now_col = 1;
-	adj_max_col = 80;
-    }
-    else
-	now_col = count_spaces(ps.com_col, s_com);	/* figure what column we
-							 * would be in if we
-							 * printed the comment
-							 * now */
+    now_col = count_spaces(ps.com_col, s_com);	/* figure what column we
+						 * would be in if we
+						 * printed the comment
+						 * now */
 
     /* Start to copy the comment */
 
