@@ -45,15 +45,6 @@
 #include "indent_globs.h"
 #include <err.h>
 
-/* profile types */
-#define	PRO_INT		3	/* integer */
-
-/* profile specials for booleans */
-#define	ON		1	/* turn it on */
-#define	OFF		0	/* turn it off */
-
-char *option_source = "?";
-
 /*
  * N.B.: because of the way the table here is scanned, options whose names are
  * substrings of other options must occur later; that is, with -lp vs -l, -lp
@@ -62,58 +53,20 @@ char *option_source = "?";
  */
 struct pro {
     char       *p_name;		/* name, eg -bl, -cli */
-    int         p_type;		/* type (int, bool, special) */
     int         p_default;	/* the default value (if int) */
     int        *p_obj;		/* the associated variable */
 }           pro[] = {
-	{"cd", PRO_INT, 0, &ps.decl_com_ind },
-	{"ci", PRO_INT, 0, &continuation_indent },
-	{"c", PRO_INT, 33, &ps.com_ind },
-	{"di", PRO_INT, 16, &ps.decl_indent },
-	{"d", PRO_INT, 0, &ps.unindent_displace },
-	{"i", PRO_INT, 8, &ps.ind_size },
-	{"lc", PRO_INT, 0, &block_comment_max_col },
-	{"l", PRO_INT, 78, &max_col },
+	{"cd", 0, &ps.decl_com_ind },
+	{"ci", 0, &continuation_indent },
+	{"c", 33, &ps.com_ind },
+	{"di", 16, &ps.decl_indent },
+	{"d", 0, &ps.unindent_displace },
+	{"i", 8, &ps.ind_size },
+	{"lc", 0, &block_comment_max_col },
+	{"l", 78, &max_col },
 	/* whew! */
-	{ 0, 0, 0, 0 }
+	{ 0, 0, 0 }
 };
-
-void scan_profile(FILE *);
-void set_option(char *);
-
-void
-scan_profile(FILE *f)
-{
-    int i;
-    char *p;
-    char        buf[BUFSIZ];
-
-    while (1) {
-	for (p = buf;
-	    (i = getc(f)) != EOF && (*p = i) > ' ' && p + 1 - buf < BUFSIZ;
-	    ++p)
-		;
-	if (p != buf) {
-	    *p = 0;
-	    set_option(buf);
-	}
-	else if (i == EOF)
-	    return;
-    }
-}
-
-char       *param_start;
-
-int
-eqin(char *s1, char *s2)
-{
-    while (*s1) {
-	if (*s1++ != *s2++)
-	    return (false);
-    }
-    param_start = s2;
-    return (true);
-}
 
 /*
  * Set the defaults.
@@ -130,32 +83,4 @@ set_defaults(void)
     ps.case_indent = 0.0;	/* -cli0.0 */
     for (p = pro; p->p_name; p++)
 	*p->p_obj = p->p_default;
-}
-
-void
-set_option(char *arg)
-{
-    struct pro *p;
-
-    arg++;			/* ignore leading "-" */
-    for (p = pro; p->p_name; p++)
-	if (*p->p_name == *arg && eqin(p->p_name, arg))
-	    goto found;
-    errx(1, "%s: unknown parameter \"%s\"", option_source, arg - 1);
-found:
-    switch (p->p_type) {
-
-    case PRO_INT:
-	if (!isdigit((unsigned char)*param_start)) {
-	    errx(1, "%s: ``%s'' requires a parameter", option_source, arg - 1);
-	}
-	*p->p_obj = atoi(param_start);
-	if (*p->p_name == 'i' && *p->p_obj <= 0)
-		errx(1, "%s: ``%s must be greater of zero''",
-		    option_source, arg - 1);
-	break;
-
-    default:
-	errx(1, "set_option: internal error: p_type %d", p->p_type);
-    }
 }
