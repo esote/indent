@@ -82,12 +82,6 @@ struct pro {
 	{"c", PRO_INT, 33, 0, &ps.com_ind },
 	{"di", PRO_INT, 16, 0, &ps.decl_indent },
 	{"d", PRO_INT, 0, 0, &ps.unindent_displace },
-	{"fbc", PRO_FONT, 0, 0, (int *) &blkcomf },
-	{"fbx", PRO_FONT, 0, 0, (int *) &boxcomf },
-	{"fb", PRO_FONT, 0, 0, (int *) &bodyf },
-	{"fc", PRO_FONT, 0, 0, (int *) &scomf },
-	{"fk", PRO_FONT, 0, 0, (int *) &keywordf },
-	{"fs", PRO_FONT, 0, 0, (int *) &stringf },
 	{"i", PRO_INT, 8, 0, &ps.ind_size },
 	{"lc", PRO_INT, 0, 0, &block_comment_max_col },
 	{"l", PRO_INT, 78, 0, &max_col },
@@ -216,10 +210,6 @@ found:
 	if (*p->p_name == 'i' && *p->p_obj <= 0)
 		errx(1, "%s: ``%s must be greater of zero''",
 		    option_source, arg - 1);
-	break;
-
-    case PRO_FONT:
-	parsefont((struct fstate *) p->p_obj, param_start);
 	break;
 
     default:

@@ -152,26 +152,10 @@ int         block_comment_max_col;
 
 /* -troff font state information */
 
-struct fstate {
-    char        font[4];
-    char        size;
-    int         allcaps:1;
-};
-
-struct fstate
-            keywordf,		/* keyword font */
-            stringf,		/* string font */
-            boxcomf,		/* Box comment font */
-            blkcomf,		/* Block comment font */
-            scomf,		/* Same line comment font */
-            bodyf;		/* major body font */
-
-
 #define STACKSIZE 150
 
 struct parser_state {
     int         last_token;
-    struct fstate cfont;	/* Current font */
     int         p_stack[STACKSIZE];	/* this is the parsers stack */
     int         il[STACKSIZE];	/* this stack stores indentation levels */
     float       cstk[STACKSIZE];/* used to store case stmt indentation levels */
@@ -274,9 +258,6 @@ void scan_profile(FILE *);
 void set_defaults(void);
 void set_option(char *);
 void addkey(char *, int);
-char   *chfont(struct fstate *, struct fstate *, char *);
-void parsefont(struct fstate *, char *);
-void writefdef(struct fstate *, int);
 int lexi(void);
 void reduce(void);
 void parse(int);

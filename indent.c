@@ -116,6 +116,7 @@ main(int argc, char **argv)
     di_stack[ps.dec_nest = 0] = 0;
     ps.want_blank = ps.in_stmt = ps.ind_stmt = false;
 
+    tabs_to_var = false;
 
     scase = ps.pcase = false;
     squest = 0;
