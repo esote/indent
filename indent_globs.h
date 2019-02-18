@@ -147,13 +147,6 @@ int         line_no;		/* the current line number. */
 int         max_col;		/* the maximum allowable line length */
 int         star_comment_cont;	/* true iff comment continuation lines should
 				 * have stars at the beginning of each line. */
-int         procnames_start_line;	/* if true, the names of procedures
-					 * being defined get placed in column
-					 * 1 (ie. a newline is placed between
-					 * the type of the procedure and its
-					 * name) */
-int         proc_calls_space;	/* If true, procedure calls look like:
-				 * foo(bar) rather than foo (bar) */
 int         inhibit_formatting;	/* true if INDENT OFF is in effect */
 int         suppress_blanklines;/* set iff following blanklines should be
 				 * suppressed */

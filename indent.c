@@ -286,11 +286,7 @@ main(int argc, char **argv)
 	    if (type_code != 0)	/* we must make this check, just in case there
 				 * was an unexpected EOF */
 		type_code = lexi();	/* read another token */
-	    /* if (ps.search_brace) ps.procname[0] = 0; */
-	    if ((is_procname = ps.procname[0]) && flushed_nl
-		    && !procnames_start_line && ps.in_decl
-		    && type_code == ident)
-		flushed_nl = 0;
+	    is_procname = ps.procname[0];
 	}			/* end of while (search_brace) */
 	last_else = 0;
 check_type:
@@ -364,7 +360,7 @@ check_type:
 	case lparen:		/* got a '(' or '[' */
 	    ++ps.p_l_follow;	/* count parens to make Healy happy */
 	    if (ps.want_blank && *token != '[' &&
-		    (ps.last_token != ident || proc_calls_space
+		    (ps.last_token != ident
 	      || (ps.its_a_keyword && !ps.sizeof_keyword)))
 		*e_code++ = ' ';
 	    if (ps.in_decl && !ps.block_init) {
@@ -728,7 +724,7 @@ check_type:
 		if (ps.want_blank)
 		    *e_code++ = ' ';
 		ps.want_blank = false;
-		if (is_procname == 0 || !procnames_start_line) {
+		if (is_procname == 0) {
 		    if (!ps.block_init) {
 			if (true) {
 			    int cur_dec_ind;
