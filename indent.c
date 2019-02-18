@@ -124,11 +124,15 @@ main(void)
     bp_save = 0;
     be_save = 0;
 
+    ps.decl_com_ind = 0;
+    ps.com_ind = 33;
+    ps.decl_indent = 16;
+    ps.unindent_displace = 0;
+    ps.ind_size = 8;
+
     /*--------------------------------------------------*\
     |   		COMMAND LINE SCAN		 |
     \*--------------------------------------------------*/
-
-    set_defaults();
 
     if (ps.com_ind <= 1)
 	ps.com_ind = 2;		/* dont put normal comments before column 2 */
