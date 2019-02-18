@@ -702,7 +702,7 @@ check_type:
 		    ps.want_blank = 0;
 		}
 	    }
-	    if (ps.in_parameter_declaration && ps.indent_parameters && ps.dec_nest == 0) {
+	    if (ps.in_parameter_declaration && ps.dec_nest == 0) {
 		ps.ind_level = ps.i_l_follow = 1;
 		ps.ind_stmt = 0;
 	    }

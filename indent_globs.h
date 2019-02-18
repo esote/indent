@@ -271,7 +271,6 @@ struct parser_state {
     float       case_indent;	/* The distance to indent case labels from the
 				 * switch statement */
     int         in_parameter_declaration;
-    int         indent_parameters;
     int         tos;		/* pointer to top of stack */
     char        procname[100];	/* The name of the current procedure */
     int         just_saw_decl;
