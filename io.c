@@ -138,42 +138,46 @@ dump_line(void)
 	    cur_col = count_spaces(cur_col, s_code);
 	}
 	if (s_com != e_com) {
-	    if (true) {		/* print comment, if any */
-		int   target = ps.com_col;
-		char *com_st = s_com;
+	    int   target = ps.com_col;
+	    char *com_st = s_com;
 
-		target += ps.comment_delta;
-		while (*com_st == '\t')
-		    com_st++, target += 8;	/* ? */
-		while (target <= 0)
-		    if (*com_st == ' ')
-			target++, com_st++;
-		    else if (*com_st == '\t')
-			target = ((target - 1) & ~7) + 9, com_st++;
-		    else
-			target = 1;
-		if (cur_col > target) {	/* if comment cant fit on this line,
+	    target += ps.comment_delta;
+
+	    while (*com_st == '\t')
+		com_st++, target += 8;	/* ? */
+
+	    while (target <= 0)
+		if (*com_st == ' ')
+		    target++, com_st++;
+		else if (*com_st == '\t')
+		    target = ((target - 1) & ~7) + 9, com_st++;
+		else
+		    target = 1;
+
+	    if (cur_col > target) {	/* if comment cant fit on this line,
 					 * put it on next line */
-		    putchar('\n');
-		    cur_col = 1;
-		    ++ps.out_lines;
-		}
-		while (e_com > com_st && isspace((unsigned char)e_com[-1]))
-		    e_com--;
-		cur_col = pad_output(cur_col, target);
-		if (!ps.box_com) {
-		    if (com_st[1] != '*' || e_com <= com_st + 1) {
-			if (com_st[1] == ' ' && com_st[0] == ' ' && e_com > com_st + 1)
-			    com_st[1] = '*';
-			else
-			    fwrite(" * ", com_st[0] == '\t' ? 2 : com_st[0] == '*' ? 1 : 3, 1, stdout);
-		    }
-		}
-		fwrite(com_st, e_com - com_st, 1, stdout);
-		ps.comment_delta = ps.n_comment_delta;
-		cur_col = count_spaces(cur_col, com_st);
-		++ps.com_lines;	/* count lines with comments */
+		putchar('\n');
+		cur_col = 1;
+		++ps.out_lines;
 	    }
+
+	    while (e_com > com_st && isspace((unsigned char)e_com[-1]))
+		e_com--;
+
+	     cur_col = pad_output(cur_col, target);
+
+	    if (!ps.box_com) {
+		if (com_st[1] != '*' || e_com <= com_st + 1) {
+		    if (com_st[1] == ' ' && com_st[0] == ' ' && e_com > com_st + 1)
+			com_st[1] = '*';
+		    else
+			fwrite(" * ", com_st[0] == '\t' ? 2 : com_st[0] == '*' ? 1 : 3, 1, stdout);
+		}
+	    }
+	    fwrite(com_st, e_com - com_st, 1, stdout);
+	    ps.comment_delta = ps.n_comment_delta;
+	    cur_col = count_spaces(cur_col, com_st);
+	    ++ps.com_lines;	/* count lines with comments */
 	}
 	if (ps.use_ff)
 	    putchar('\014');
@@ -210,19 +214,17 @@ compute_code_target(void)
 
     target_col = ps.ind_size * ps.ind_level + 1;
     if (ps.paren_level) {
-	if (true) {
-	    int    w;
-	    int    t = paren_target;
+	int    w;
+	int    t = paren_target;
 
-	    if ((w = count_spaces(t, s_code) - max_col) > 0
-		    && count_spaces(target_col, s_code) <= max_col) {
-		t -= w + 1;
-		if (t > target_col)
-		    target_col = t;
-	    }
-	    else
+	if ((w = count_spaces(t, s_code) - max_col) > 0
+		&& count_spaces(target_col, s_code) <= max_col) {
+	    t -= w + 1;
+	    if (t > target_col)
 		target_col = t;
 	}
+	else
+	    target_col = t;
     } else if (ps.ind_stmt) {
 	target_col += ps.ind_size;
     }
