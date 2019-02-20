@@ -470,21 +470,11 @@ stop_lit:
     case '=':
 	if (ps.in_or_st)
 	    ps.block_init = 1;
-#ifdef undef
-	if (chartype[*buf_ptr] == opchar) {	/* we have two char assignment */
-	    e_token[-1] = *buf_ptr++;
-	    if ((e_token[-1] == '<' || e_token[-1] == '>') && e_token[-1] == *buf_ptr)
-		*e_token++ = *buf_ptr++;
-	    *e_token++ = '=';	/* Flip =+ to += */
-	    *e_token = 0;
-	}
-#else
 	if (*buf_ptr == '=') {/* == */
 	    *e_token++ = '=';	/* Flip =+ to += */
 	    buf_ptr++;
 	    *e_token = 0;
 	}
-#endif
 	code = binary_op;
 	unary_delim = true;
 	break;

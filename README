@@ -1,1 +1,1 @@
-Fork of OpenBSD indent(1). Removes all non-stdio interaction. Used in fmtc.
+Fork of OpenBSD indent(1). Removes all non-stdio interaction. Used in github.com/esote/fmtc.
