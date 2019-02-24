@@ -1,1 +1,4 @@
-C parser and formatter. Fork of OpenBSD indent(1). Removes all non-stdio interaction. Used in github.com/esote/fmtc.
+C parser and formatter for the OpenBSD kernel normal form.
+
+Fork of OpenBSD indent(1). Removes all non-stdio interaction.
+Used in github.com/esote/fmtc.
